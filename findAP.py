@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
-import sys, os, time, random, threading
-from scapy.all import*
+import sys, os, time, random, threading, subprocess
+from colorama import Fore
+from scapy.all import* #scapy
 
 devices = set()
 ch = 0
@@ -24,9 +25,17 @@ def PacketHandler(pkt) :
                 bssid = str(pkt[Dot11Elt].info)
                 print('SSID: %s  BSSID: %s ' % (bssid[2:(len(bssid) - 1)], pkt.addr3))
             devices.add(pkt.addr3)
+def checkInterface(interface):
+    run = 'iwconfig {} | grep Mode'.format(interface)
+    output = subprocess.Popen(run, shell=True)
+    if ('No such device' not in str(output)):
+        print(Fore.RED)
+        sys.exit()
 
 
 if __name__ == '__main__':
+    # check interface
+    checkInterface(sys.argv[1])
     #thread for ch hop
     hopper = threading.Thread(target=channel_hopper, args=(sys.argv[1],))
     hopper.daemon = True
