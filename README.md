@@ -17,5 +17,7 @@ sudo mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
 * scapy 802.11: https://scapy.readthedocs.io/en/latest/api/scapy.layers.dot11.html
 
 # To do
-* jump to different channel
-* put interface to monitor mode
+- [x] jump to different channel
+- [x] put interface to monitor mode
+- [ ] show AP's channel (check LEShortField in scapy)
+- [ ] Dauth attack?
