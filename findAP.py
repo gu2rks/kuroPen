@@ -26,11 +26,11 @@ def PacketHandler(pkt) :
                 print('SSID: %s  BSSID: %s ' % (bssid[2:(len(bssid) - 1)], pkt.addr3))
             devices.add(pkt.addr3)
 def checkInterface(interface):
-    run = 'iwconfig {} | grep Mode'.format(interface)
-    output = subprocess.Popen(run, shell=True)
-    if ('No such device' not in str(output)):
-        print(Fore.RED)
+    output = subprocess.getoutput('iwconfig {} | grep Mode'.format(interface))
+    if ('No such device' in str(output)):
+        print(Fore.RED + output + '\n[+]Exit the script, use iwconfig to check the interfaces')
         sys.exit()
+
 
 
 if __name__ == '__main__':
