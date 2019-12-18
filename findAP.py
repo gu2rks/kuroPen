@@ -10,7 +10,7 @@ def channel_hopper(interface):
     while True:
         ch = random.randint(1, 13) # pick random ch 1-13
         os.system('iw dev %s set channel %d' % (interface, ch))
-        print('------------------------------------')
+        print(Fore.WHITE+ '------------------------------------')
         print('jump to channel: %d' %ch)
         print('------------------------------------')
         time.sleep(2)
@@ -23,14 +23,26 @@ def PacketHandler(pkt) :
                 print('SSID: %s  BSSID: %s ' % ('HIDDEN', pkt.addr3))
             else:
                 bssid = str(pkt[Dot11Elt].info)
-                print('SSID: %s  BSSID: %s ' % (bssid[2:(len(bssid) - 1)], pkt.addr3))
+                print(Fore.WHITE + 'SSID: %s  BSSID: %s ' % (bssid[2:(len(bssid) - 1)], pkt.addr3))
             devices.add(pkt.addr3)
+
 def checkInterface(interface):
     output = subprocess.getoutput('iwconfig {} | grep Mode'.format(interface))
     if ('No such device' in str(output)):
         print(Fore.RED + output + '\n[+]Exit the script, use iwconfig to check the interfaces')
         sys.exit()
-
+    elif ('Monitor' not in str(output)):
+        anw = input(Fore.RED +'[x] The given interface is not in Monitor mode. put it to Monitor mode? [Y/N]')
+        if (anw.lower() == 'y'):
+            print('[x] Kill interfering processes')
+            os.system('sudo airmon-ng check kill')
+            os.system('sudo ip link set %s down' % interface)
+            os.system('sudo iw %s set monitor control' % interface)
+            os.system('sudo ip link set %s up' % interface)
+            print(Fore.GREEN + 'Monitor mode is up')
+        else:
+            print('cya nextime')
+            sys.exit()
 
 
 if __name__ == '__main__':
@@ -41,4 +53,5 @@ if __name__ == '__main__':
     hopper.daemon = True
     hopper.start()
     # sniff packet
-    sniff(iface = sys.argv[1], count= int( sys.argv[2]), prn = PacketHandler)
+    sniff(iface = sys.argv[1], prn = PacketHandler)
+    
