@@ -10,20 +10,18 @@ def channel_hopper(interface):
     while True:
         ch = random.randint(1, 13) # pick random ch 1-13
         os.system('iw dev %s set channel %d' % (interface, ch))
-        print(Fore.WHITE+ '------------------------------------')
-        print('jump to channel: %d' %ch)
-        print('------------------------------------')
-        time.sleep(2)
+        time.sleep(1)
 
 def PacketHandler(pkt) :
     # looking for Beacon or ProbeResp
     if pkt.haslayer(Dot11Beacon) or pkt.haslayer(Dot11ProbeResp):
         if pkt.addr2 not in devices:
+            channel = subprocess.getoutput('iwlist {} channel | grep Current'.format(sys.argv[1]))
             if(str(pkt[Dot11Elt].info) == "b\'\'"):
-                print('SSID: %s  BSSID: %s ' % ('HIDDEN', pkt.addr3))
+                print('SSID: %s  BSSID: %s  %s' % ('HIDDEN', pkt.addr3, channel))
             else:
                 bssid = str(pkt[Dot11Elt].info)
-                print(Fore.WHITE + 'SSID: %s  BSSID: %s ' % (bssid[2:(len(bssid) - 1)], pkt.addr3))
+                print(Fore.WHITE + 'SSID: %s  BSSID: %s %s' % (bssid[2:(len(bssid) - 1)], pkt.addr3, channel))
             devices.add(pkt.addr3)
 
 def checkInterface(interface):
