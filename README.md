@@ -21,4 +21,6 @@ sudo mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
 - [x] jump to different channel
 - [x] put interface to monitor mode
 - [x] show AP's channel
+- [ ] show encryption metod for each AP
 - [ ] Dauth attack?
+- [ ] Becon spam

@@ -15,7 +15,7 @@ def channel_hopper(interface):
 def PacketHandler(pkt) :
     # looking for Beacon or ProbeResp
     if pkt.haslayer(Dot11Beacon) or pkt.haslayer(Dot11ProbeResp):
-        if pkt.addr2 not in devices:
+        if pkt.addr3 not in devices:
             channel = subprocess.getoutput('iwlist {} channel | grep Current'.format(sys.argv[1]))
             if(str(pkt[Dot11Elt].info) == "b\'\'"):
                 print('SSID: %s  BSSID: %s  %s' % ('HIDDEN', pkt.addr3, channel))
